@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'finalProject_2.ui'
 #
@@ -6,11 +6,56 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 import NewWindow, TestOpen, evalTeam, instructionWindow, playerInfo, calculate_pt
 import globalVars
 from PyQt5.QtWidgets import QMessageBox
-
+import sqlite3
+def del_old(team):
+    game=sqlite3.connect('game.db')
+    gamecurs=game.cursor()
+    Team=str(team)
+    sql="select name from teams"
+    gamecurs.execute(sql)
+    old=gamecurs.fetchall()
+    old_list=[]
+    for j in old:
+        if j[0] not in old_list:
+            old_list.append(j[0])
+    if Team in old_list:
+        sql="DELETE FROM TEAMS WHERE NAME='"+str(Team)+"';"
+        gamecurs.execute(sql)
+        game.commit()
+    game.close()
+    
+def Team_data(team,Plyname):
+    game=sqlite3.connect('game.db')
+    gamecurs=game.cursor()
+    Name=str(Plyname.upper())
+    Team=str(team)
+    sql="SELECT VALUE FROM STATS WHERE NAME='"+str(Name)+"';"
+    gamecurs.execute(sql)
+    Val=gamecurs.fetchone()
+    print(Team,Name,Val[0])
+    try:
+        sql="insert into teams values('"+str(Team)+"','"+str(Name)+"','"+str(Val[0])+"');"
+        gamecurs.execute(sql)
+        game.commit()
+    except:
+        print("Not inserted")
+    game.close()
+def Del_data():
+    game=sqlite3.connect('game.db')
+    gamecurs=game.cursor()
+    try:
+        sql="Delete from teams;"
+        gamecurs.execute(sql)
+        game.commit()
+    except:
+        print("not deleted")
+    game.close()
+    
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -180,9 +225,15 @@ class Ui_MainWindow(object):
             finalTeamView = QMessageBox()
             finalTeamView.setIcon(QMessageBox.Information)
             s = 'Team : ' + globalVars.selectedTeam + ' Confirmed'
+            Team=globalVars.selectedTeam
+            del_old(Team)
             s += '\n Team Players are\n\n'
             for player in globalVars.teamData[globalVars.selectedTeam]:
                 s += player + '\n'
+                try:
+                    Team_data(Team,player)
+                except:
+                    print("not inserted")
             finalTeamView.setText(s)
             finalTeamView.exec_()
             self.refresh()
@@ -409,6 +460,7 @@ class Ui_MainWindow(object):
         globalVars.selectedTeam = '--'
         self.playerView.clear()
         self.teamView.clear()
+
         
 if __name__ == "__main__":
     import sys
