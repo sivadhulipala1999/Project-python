@@ -71,6 +71,24 @@ def score(match_num,player_nm):
     score_pl += score_bow(data[4],data[5]);
     score_pl += score_fld(data[6],data[7],data[8]);
     return score_pl
+
+def score_calc(match,name_list):
+    try:
+        score_pt=0
+        match=int(match)
+        match="MATCH"+str(match)
+        points = []
+        for i in range(1,12):
+            name=name_list[i-1]
+            point = score(match,name.upper())
+            score_pt += point
+            points.append(point)
+        total_pt = score_pt
+        points.append(total_pt)
+        return points
+    except:
+        total_pt=0
+        print(total_pt)
     
 try:
     score_pt=0
@@ -94,4 +112,4 @@ except:
 
 
         
-        
+   
