@@ -89,3 +89,27 @@ def score_calc(match,name_list):
     except:
         total_pt=0
         print(total_pt)
+    
+try:
+    score_pt=0
+    match=int(input("Enter match number:"))
+    match="MATCH"+str(match)
+    for i in range(1,12):
+        name=input("enter player name:")
+        score_pt +=score(match,name.upper())
+    total_pt = score_pt
+    print(total_pt)
+except:
+    total_pt=0
+    print(total_pt)
+
+
+
+
+
+
+
+
+
+        
+   
